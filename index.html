@@ -1477,7 +1477,7 @@
     }));
 
     try {
-      const response = await fetch('http://localhost:3000/api/pedidos', {
+      const response = await fetch('https://agente-barber.onrender.com/api/pedidos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre_cliente, telefono, items })
@@ -1514,7 +1514,7 @@
     const fecha = `${anio}-${mes}-${dia}`;
 
     try {
-      const response = await fetch('http://localhost:3000/api/reservas', {
+      const response = await fetch('https://agente-barber.onrender.com/api/reservas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre, telefono, fecha, servicio, barbero })
