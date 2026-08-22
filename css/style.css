@@ -147,7 +147,7 @@
   .hero h1 .accent{color:var(--yellow);}
   .hero-logo-sello{
   position:absolute;
-  right:clamp(6rem, 18vw, 14rem);
+  right:clamp(1rem, 6vw, 3rem);
   bottom:6rem;
   width:200px;
   height:200px;
