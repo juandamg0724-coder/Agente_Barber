@@ -1529,6 +1529,38 @@
       alert('Hubo un problema al enviar tu reserva. Por favor intenta de nuevo.');
     }
   });
+
+/* ===== VALIDACIÓN DE FECHAS: no permitir días pasados ===== */
+function actualizarDiasDisponibles(){
+  const mesSelect = document.getElementById('fecha-mes');
+  const anioSelect = document.getElementById('fecha-anio');
+  const diaSelect = document.getElementById('fecha-dia');
+
+  const mesSeleccionado = parseInt(mesSelect.value);
+  const anioSeleccionado = parseInt(anioSelect.value);
+
+  if (!mesSeleccionado || !anioSeleccionado) return;
+
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+  const esMesActual = (anioSeleccionado === hoy.getFullYear()) && (mesSeleccionado === (hoy.getMonth() + 1));
+  const diaHoy = hoy.getDate();
+
+  Array.from(diaSelect.options).forEach(option => {
+    if (!option.value) return;
+    const diaOpcion = parseInt(option.value);
+    option.disabled = esMesActual && diaOpcion < diaHoy;
+  });
+
+  const opcionActual = diaSelect.options[diaSelect.selectedIndex];
+  if (opcionActual && opcionActual.disabled) {
+    diaSelect.value = '';
+  }
+}
+
+document.getElementById('fecha-mes').addEventListener('change', actualizarDiasDisponibles);
+document.getElementById('fecha-anio').addEventListener('change', actualizarDiasDisponibles);
+
 </script>
 
 </body>
