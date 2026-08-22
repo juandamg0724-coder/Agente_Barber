@@ -999,7 +999,6 @@
         <button type="button" class="qty-btn qty-plus" aria-label="Sumar">+</button>
       </div>
       <button type="button" class="btn btn-primary add-to-cart-btn">Agregar al carrito</button>
-    
     </div>
     <div class="product-card" data-name="Aceite para Barba" data-price="32000">
       <div class="product-img">
@@ -1014,7 +1013,6 @@
         <button type="button" class="qty-btn qty-plus" aria-label="Sumar">+</button>
       </div>
       <button type="button" class="btn btn-primary add-to-cart-btn">Agregar al carrito</button>
-    
     </div>
     <div class="product-card" data-name="Shampoo Multiusos" data-price="28000">
       <div class="product-img">
@@ -1029,7 +1027,6 @@
         <button type="button" class="qty-btn qty-plus" aria-label="Sumar">+</button>
       </div>
       <button type="button" class="btn btn-primary add-to-cart-btn">Agregar al carrito</button>
-    
     </div>
     <div class="product-card" data-name="Kit Completo" data-price="85000">
       <div class="product-img">
@@ -1044,7 +1041,6 @@
         <button type="button" class="qty-btn qty-plus" aria-label="Sumar">+</button>
       </div>
       <button type="button" class="btn btn-primary add-to-cart-btn">Agregar al carrito</button>
-    
     </div>
   </div>
   <div class="products-grid">
@@ -1061,7 +1057,6 @@
         <button type="button" class="qty-btn qty-plus" aria-label="Sumar">+</button>
       </div>
       <button type="button" class="btn btn-primary add-to-cart-btn">Agregar al carrito</button>
-    
     </div>
     <div class="product-card" data-name="Crema para peinar" data-price="32000">
       <div class="product-img">
@@ -1076,7 +1071,6 @@
         <button type="button" class="qty-btn qty-plus" aria-label="Sumar">+</button>
       </div>
       <button type="button" class="btn btn-primary add-to-cart-btn">Agregar al carrito</button>
-    
     </div>
     <div class="product-card" data-name="Acondicionador" data-price="28000">
       <div class="product-img">
@@ -1091,7 +1085,6 @@
         <button type="button" class="qty-btn qty-plus" aria-label="Sumar">+</button>
       </div>
       <button type="button" class="btn btn-primary add-to-cart-btn">Agregar al carrito</button>
-    
     </div>
     <div class="product-card" data-name="Gel para cabello" data-price="25000">
       <div class="product-img">
@@ -1106,7 +1099,6 @@
         <button type="button" class="qty-btn qty-plus" aria-label="Sumar">+</button>
       </div>
       <button type="button" class="btn btn-primary add-to-cart-btn">Agregar al carrito</button>
-    
     </div>
   </div>
 </section>
@@ -1361,11 +1353,9 @@
   cartOverlay.addEventListener('click', closeCart);
 
   function renderCart(){
-    // Badge: total de unidades
     const totalUnits = cart.reduce((sum, item) => sum + item.qty, 0);
     cartBadge.textContent = totalUnits;
 
-    // Lista de items
     if (cart.length === 0){
       cartItems.innerHTML = '';
       cartItems.appendChild(cartEmptyMsg);
@@ -1389,11 +1379,9 @@
       });
     }
 
-    // Total general
     const grandTotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
     cartTotal.innerHTML = `${formatCOP(grandTotal)} <small>cop</small>`;
 
-    // Listeners de los botones dentro de cada fila del carrito
     cartItems.querySelectorAll('.cart-qty-plus').forEach(btn => {
       btn.addEventListener('click', () => {
         const i = parseInt(btn.dataset.index);
@@ -1429,7 +1417,6 @@
     openCart();
   }
 
-  // Selector de cantidad + botón "Agregar al carrito" en cada tarjeta de producto
   document.querySelectorAll('.product-card').forEach(card => {
     const name = card.dataset.name;
     const price = parseFloat(card.dataset.price);
@@ -1469,7 +1456,6 @@
       return;
     }
 
-    // Convertimos el carrito al formato que espera el backend
     const items = cart.map(item => ({
       producto_nombre: item.name,
       precio_unitario: item.price,
@@ -1510,7 +1496,6 @@
     const servicio = document.getElementById('servicio').value;
     const barbero = document.getElementById('barbero').value;
 
-    // Convertimos día/mes/año a formato de fecha MySQL: AAAA-MM-DD
     const fecha = `${anio}-${mes}-${dia}`;
 
     try {
@@ -1530,37 +1515,63 @@
     }
   });
 
-/* ===== VALIDACIÓN DE FECHAS: no permitir días pasados ===== */
-function actualizarDiasDisponibles(){
-  const mesSelect = document.getElementById('fecha-mes');
-  const anioSelect = document.getElementById('fecha-anio');
-  const diaSelect = document.getElementById('fecha-dia');
+  /* ===== VALIDACIÓN DE FECHAS: no permitir meses ni días pasados ===== */
+  function actualizarMesesDisponibles(){
+    const anioSelect = document.getElementById('fecha-anio');
+    const mesSelect = document.getElementById('fecha-mes');
 
-  const mesSeleccionado = parseInt(mesSelect.value);
-  const anioSeleccionado = parseInt(anioSelect.value);
+    const anioSeleccionado = parseInt(anioSelect.value);
+    if (!anioSeleccionado) return;
 
-  if (!mesSeleccionado || !anioSeleccionado) return;
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const esAnioActual = anioSeleccionado === hoy.getFullYear();
+    const mesActual = hoy.getMonth() + 1;
 
-  const hoy = new Date();
-  hoy.setHours(0, 0, 0, 0);
-  const esMesActual = (anioSeleccionado === hoy.getFullYear()) && (mesSeleccionado === (hoy.getMonth() + 1));
-  const diaHoy = hoy.getDate();
+    Array.from(mesSelect.options).forEach(option => {
+      if (!option.value) return;
+      const valorMes = parseInt(option.value);
+      option.disabled = esAnioActual && valorMes < mesActual;
+    });
 
-  Array.from(diaSelect.options).forEach(option => {
-    if (!option.value) return;
-    const diaOpcion = parseInt(option.value);
-    option.disabled = esMesActual && diaOpcion < diaHoy;
-  });
-
-  const opcionActual = diaSelect.options[diaSelect.selectedIndex];
-  if (opcionActual && opcionActual.disabled) {
-    diaSelect.value = '';
+    const opcionActual = mesSelect.options[mesSelect.selectedIndex];
+    if (opcionActual && opcionActual.disabled) {
+      mesSelect.value = '';
+    }
   }
-}
 
-document.getElementById('fecha-mes').addEventListener('change', actualizarDiasDisponibles);
-document.getElementById('fecha-anio').addEventListener('change', actualizarDiasDisponibles);
+  function actualizarDiasDisponibles(){
+    const mesSelect = document.getElementById('fecha-mes');
+    const anioSelect = document.getElementById('fecha-anio');
+    const diaSelect = document.getElementById('fecha-dia');
 
+    const mesSeleccionado = parseInt(mesSelect.value);
+    const anioSeleccionado = parseInt(anioSelect.value);
+
+    if (!mesSeleccionado || !anioSeleccionado) return;
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    const esMesActual = (anioSeleccionado === hoy.getFullYear()) && (mesSeleccionado === (hoy.getMonth() + 1));
+    const diaHoy = hoy.getDate();
+
+    Array.from(diaSelect.options).forEach(option => {
+      if (!option.value) return;
+      const diaOpcion = parseInt(option.value);
+      option.disabled = esMesActual && diaOpcion < diaHoy;
+    });
+
+    const opcionActual = diaSelect.options[diaSelect.selectedIndex];
+    if (opcionActual && opcionActual.disabled) {
+      diaSelect.value = '';
+    }
+  }
+
+  document.getElementById('fecha-anio').addEventListener('change', () => {
+    actualizarMesesDisponibles();
+    actualizarDiasDisponibles();
+  });
+  document.getElementById('fecha-mes').addEventListener('change', actualizarDiasDisponibles);
 </script>
 
 </body>
