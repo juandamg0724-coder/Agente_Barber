@@ -231,6 +231,57 @@
   .section-head h2{font-size:clamp(2.2rem, 5vw, 3.6rem);}
   .section-head h2 .accent{color:var(--yellow);}
 
+/* ===== TEST DE ESTILO ===== */
+  .quiz-card{
+    max-width:640px;
+    background:var(--bg-panel);
+    border:1px solid var(--line);
+    padding:3rem;
+    text-align:center;
+  }
+  .quiz-step{display:none;}
+  .quiz-step.active{display:block;}
+  .quiz-step p{color:var(--gray);font-size:1rem;margin-bottom:2rem;}
+  .quiz-progress{
+    font-size:0.72rem;
+    letter-spacing:0.14em;
+    color:var(--orange);
+    text-transform:uppercase;
+    font-weight:600;
+    margin-bottom:1rem;
+  }
+  .quiz-step h3{font-size:1.8rem;margin-bottom:2rem;}
+  .quiz-options{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+  }
+  .quiz-option{
+    background:var(--bg);
+    border:1px solid var(--line);
+    color:var(--white);
+    font-family:'Oswald',sans-serif;
+    font-weight:500;
+    font-size:0.95rem;
+    padding:1.1rem 1rem;
+    cursor:pointer;
+    transition:border-color 0.2s ease, background 0.2s ease;
+  }
+  .quiz-option:hover{border-color:var(--yellow);background:rgba(244,180,0,0.08);}
+  #quizResultName{font-size:2rem;margin-bottom:1rem;}
+  .quiz-step[data-step="result"] p{max-width:420px;margin-left:auto;margin-right:auto;}
+  .quiz-result-price{
+    font-family:'Anton',sans-serif;
+    font-size:1.6rem;
+    color:var(--yellow);
+    margin:1.5rem 0 2rem;
+  }
+  @media (max-width:600px){
+    .quiz-card{padding:2rem 1.5rem;}
+    .quiz-options{grid-template-columns:1fr;}
+  }
+
+
   /* ===== SERVICIOS ===== */
   .services-grid{
     display:grid;
@@ -944,6 +995,61 @@
   </div>
 </section>
 
+<section id="test-estilo">
+  <div class="section-head">
+    <div class="eyebrow">Encuentra tu estilo</div>
+    <h2>¿Cuál es tu<br><span class="accent">corte ideal?</span></h2>
+  </div>
+  <div class="quiz-card" id="quizCard">
+
+    <div class="quiz-step active" data-step="intro">
+      <p>Responde 3 preguntas rápidas y te decimos qué servicio se ajusta mejor a ti.</p>
+      <button type="button" class="btn btn-primary" id="quizStartBtn">Comenzar test →</button>
+    </div>
+
+    <div class="quiz-step" data-step="1">
+      <div class="quiz-progress">Pregunta 1 de 3</div>
+      <h3>¿Cómo es la forma de tu rostro?</h3>
+      <div class="quiz-options">
+        <button type="button" class="quiz-option" data-question="rostro" data-value="ovalado">Ovalado</button>
+        <button type="button" class="quiz-option" data-question="rostro" data-value="redondo">Redondo</button>
+        <button type="button" class="quiz-option" data-question="rostro" data-value="cuadrado">Cuadrado</button>
+        <button type="button" class="quiz-option" data-question="rostro" data-value="alargado">Alargado</button>
+      </div>
+    </div>
+
+    <div class="quiz-step" data-step="2">
+      <div class="quiz-progress">Pregunta 2 de 3</div>
+      <h3>¿Cómo es tu tipo de cabello?</h3>
+      <div class="quiz-options">
+        <button type="button" class="quiz-option" data-question="cabello" data-value="liso">Liso</button>
+        <button type="button" class="quiz-option" data-question="cabello" data-value="ondulado">Ondulado</button>
+        <button type="button" class="quiz-option" data-question="cabello" data-value="rizado">Rizado</button>
+        <button type="button" class="quiz-option" data-question="cabello" data-value="grueso">Grueso / abundante</button>
+      </div>
+    </div>
+
+    <div class="quiz-step" data-step="3">
+      <div class="quiz-progress">Pregunta 3 de 3</div>
+      <h3>¿Cuánto tiempo le dedicas a peinarte cada día?</h3>
+      <div class="quiz-options">
+        <button type="button" class="quiz-option" data-question="tiempo" data-value="nada">Nada, salgo así</button>
+        <button type="button" class="quiz-option" data-question="tiempo" data-value="poco">Menos de 5 minutos</button>
+        <button type="button" class="quiz-option" data-question="tiempo" data-value="medio">5 a 10 minutos</button>
+        <button type="button" class="quiz-option" data-question="tiempo" data-value="mucho">Más de 10 min, me gusta lucir bien</button>
+      </div>
+    </div>
+
+    <div class="quiz-step" data-step="result">
+      <div class="eyebrow">Tu recomendación</div>
+      <h3 id="quizResultName">Corte Básico</h3>
+      <p id="quizResultDesc"></p>
+      <div class="quiz-result-price" id="quizResultPrice"></div>
+      <button type="button" class="btn btn-ghost" id="quizRestartBtn">Volver a intentar ↺</button>
+    </div>
+
+  </div>
+</section>
 <section id="equipo">
   <div class="team-intro">
     <div>
@@ -1277,6 +1383,97 @@
   const navLinks = document.getElementById('navLinks');
   burger.addEventListener('click', () => navLinks.classList.toggle('open'));
   navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+  
+  
+  /* ===== TEST DE ESTILO / VISAGISMO ===== */
+  const quizCard = document.getElementById('quizCard');
+  const quizStartBtn = document.getElementById('quizStartBtn');
+  const quizRestartBtn = document.getElementById('quizRestartBtn');
+
+  const respuestasQuiz = { rostro: null, cabello: null, tiempo: null };
+
+  const serviciosData = {
+    basico: {
+      nombre: 'Corte Básico',
+      desc: 'Tijera y navaja. Perfil limpio, acabado impecable.',
+      precio: '$20.000 cop'
+    },
+    barba: {
+      nombre: 'Barba & Corte',
+      desc: 'Toalla caliente, navaja recta. El ritual completo.',
+      precio: '$40.000 cop'
+    },
+    premium: {
+      nombre: 'Corte Premium',
+      desc: 'Degradado milimétrico. De la piel a tu estilo.',
+      precio: '$60.000 cop'
+    },
+    personalizado: {
+      nombre: 'Personalizado con Asesoría',
+      desc: 'Corte a petición del cliente con recomendaciones.',
+      precio: '30.000–70.000 cop'
+    }
+  };
+
+  function irAPasoQuiz(paso){
+    quizCard.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
+    quizCard.querySelector(`.quiz-step[data-step="${paso}"]`).classList.add('active');
+  }
+
+  quizStartBtn.addEventListener('click', () => irAPasoQuiz('1'));
+
+  quizCard.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pregunta = btn.dataset.question;
+      const valor = btn.dataset.value;
+      respuestasQuiz[pregunta] = valor;
+
+      if (pregunta === 'rostro') irAPasoQuiz('2');
+      else if (pregunta === 'cabello') irAPasoQuiz('3');
+      else if (pregunta === 'tiempo') mostrarResultadoQuiz();
+    });
+  });
+
+  function mostrarResultadoQuiz(){
+    const { rostro, cabello, tiempo } = respuestasQuiz;
+    const puntos = { basico: 0, barba: 0, premium: 0, personalizado: 0 };
+
+    if (tiempo === 'nada') puntos.basico += 2;
+    if (tiempo === 'poco'){ puntos.basico += 1; puntos.barba += 1; }
+    if (tiempo === 'medio') puntos.premium += 2;
+    if (tiempo === 'mucho'){ puntos.personalizado += 2; puntos.premium += 1; }
+
+    if (cabello === 'liso'){ puntos.basico += 1; puntos.premium += 1; }
+    if (cabello === 'ondulado'){ puntos.premium += 1; puntos.barba += 1; }
+    if (cabello === 'rizado') puntos.personalizado += 2;
+    if (cabello === 'grueso'){ puntos.personalizado += 1; puntos.premium += 1; }
+
+    if (rostro === 'ovalado') puntos.basico += 1;
+    if (rostro === 'redondo') puntos.premium += 1;
+    if (rostro === 'cuadrado'){ puntos.barba += 1; puntos.premium += 1; }
+    if (rostro === 'alargado'){ puntos.personalizado += 1; puntos.basico += 1; }
+
+    let ganador = 'basico';
+    let maxPuntos = -1;
+    ['basico','barba','premium','personalizado'].forEach(key => {
+      if (puntos[key] > maxPuntos){ maxPuntos = puntos[key]; ganador = key; }
+    });
+
+    const resultado = serviciosData[ganador];
+    document.getElementById('quizResultName').textContent = resultado.nombre;
+    document.getElementById('quizResultDesc').textContent = resultado.desc;
+    document.getElementById('quizResultPrice').textContent = resultado.precio;
+
+    irAPasoQuiz('result');
+  }
+
+  quizRestartBtn.addEventListener('click', () => {
+    respuestasQuiz.rostro = null;
+    respuestasQuiz.cabello = null;
+    respuestasQuiz.tiempo = null;
+    irAPasoQuiz('intro');
+  });
+  
   /* ===== PERFILES DE BARBEROS ===== */
   const barberos = {
     marcos: {
