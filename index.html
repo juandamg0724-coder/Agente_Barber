@@ -1392,77 +1392,81 @@
 
   const respuestasQuiz = { rostro: null, cabello: null, tiempo: null };
 
-  const serviciosData = {
-    basico: {
-      nombre: 'Corte Básico',
-      desc: 'Tijera y navaja. Perfil limpio, acabado impecable.',
-      precio: '$20.000 cop'
+    const cortesData = {
+    buzzcut: {
+      nombre: 'Buzz Cut',
+      desc: 'Corte al ras con máquina, mínimo mantenimiento y máxima frescura. Ideal para quienes buscan practicidad total.',
+      servicio: 'Corte Básico — $20.000 cop'
     },
-    barba: {
-      nombre: 'Barba & Corte',
-      desc: 'Toalla caliente, navaja recta. El ritual completo.',
-      precio: '$40.000 cop'
+    crewcut: {
+      nombre: 'Crew Cut',
+      desc: 'Un clásico atemporal: corto en los lados, un poco más de largo arriba. Ordenado, versátil y fácil de mantener.',
+      servicio: 'Corte Básico — $20.000 cop'
     },
-    premium: {
-      nombre: 'Corte Premium',
-      desc: 'Degradado milimétrico. De la piel a tu estilo.',
-      precio: '$60.000 cop'
+    fade: {
+      nombre: 'Fade',
+      desc: 'Degradado progresivo de los lados hacia arriba. Moderno, limpio, y se adapta a casi cualquier tipo de rostro.',
+      servicio: 'Corte Premium — $60.000 cop'
     },
-    personalizado: {
-      nombre: 'Personalizado con Asesoría',
-      desc: 'Corte a petición del cliente con recomendaciones.',
-      precio: '30.000–70.000 cop'
+    undercut: {
+      nombre: 'Undercut',
+      desc: 'Contraste marcado entre laterales muy cortos y la parte superior larga. Look audaz y con mucha personalidad.',
+      servicio: 'Corte Premium — $60.000 cop'
+    },
+    pompadour: {
+      nombre: 'Pompadour',
+      desc: 'Volumen hacia arriba y atrás, con los lados prolijos. Elegante y con mucha presencia.',
+      servicio: 'Personalizado con Asesoría'
+    },
+    slickback: {
+      nombre: 'Slick Back',
+      desc: 'Todo el cabello peinado hacia atrás con producto. Look pulido, sofisticado y de bajo mantenimiento diario.',
+      servicio: 'Barba & Corte — $40.000 cop'
+    },
+    mullet: {
+      nombre: 'Mullet',
+      desc: 'Corto adelante y en los lados, más largo atrás. Un look retro que volvió con fuerza, ideal para destacar.',
+      servicio: 'Personalizado con Asesoría'
+    },
+    texturedcrop: {
+      nombre: 'Textured Crop',
+      desc: 'Textura natural con flequillo corto y desconectado. Perfecto para cabello rizado u ondulado, look desenfadado.',
+      servicio: 'Corte Premium — $60.000 cop'
     }
   };
 
-  function irAPasoQuiz(paso){
-    quizCard.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
-    quizCard.querySelector(`.quiz-step[data-step="${paso}"]`).classList.add('active');
-  }
-
-  quizStartBtn.addEventListener('click', () => irAPasoQuiz('1'));
-
-  quizCard.querySelectorAll('.quiz-option').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const pregunta = btn.dataset.question;
-      const valor = btn.dataset.value;
-      respuestasQuiz[pregunta] = valor;
-
-      if (pregunta === 'rostro') irAPasoQuiz('2');
-      else if (pregunta === 'cabello') irAPasoQuiz('3');
-      else if (pregunta === 'tiempo') mostrarResultadoQuiz();
-    });
-  });
-
   function mostrarResultadoQuiz(){
     const { rostro, cabello, tiempo } = respuestasQuiz;
-    const puntos = { basico: 0, barba: 0, premium: 0, personalizado: 0 };
+    const puntos = {
+      buzzcut: 0, crewcut: 0, fade: 0, undercut: 0,
+      pompadour: 0, slickback: 0, mullet: 0, texturedcrop: 0
+    };
 
-    if (tiempo === 'nada') puntos.basico += 2;
-    if (tiempo === 'poco'){ puntos.basico += 1; puntos.barba += 1; }
-    if (tiempo === 'medio') puntos.premium += 2;
-    if (tiempo === 'mucho'){ puntos.personalizado += 2; puntos.premium += 1; }
+    if (tiempo === 'nada'){ puntos.buzzcut += 3; puntos.crewcut += 2; }
+    if (tiempo === 'poco'){ puntos.fade += 2; puntos.crewcut += 1; puntos.undercut += 1; }
+    if (tiempo === 'medio'){ puntos.pompadour += 2; puntos.slickback += 2; puntos.undercut += 1; }
+    if (tiempo === 'mucho'){ puntos.mullet += 3; puntos.pompadour += 1; puntos.texturedcrop += 1; }
 
-    if (cabello === 'liso'){ puntos.basico += 1; puntos.premium += 1; }
-    if (cabello === 'ondulado'){ puntos.premium += 1; puntos.barba += 1; }
-    if (cabello === 'rizado') puntos.personalizado += 2;
-    if (cabello === 'grueso'){ puntos.personalizado += 1; puntos.premium += 1; }
+    if (cabello === 'liso'){ puntos.crewcut += 1; puntos.slickback += 2; puntos.pompadour += 1; }
+    if (cabello === 'ondulado'){ puntos.fade += 1; puntos.undercut += 1; puntos.texturedcrop += 1; }
+    if (cabello === 'rizado'){ puntos.texturedcrop += 3; puntos.mullet += 1; }
+    if (cabello === 'grueso'){ puntos.mullet += 1; puntos.buzzcut += 1; puntos.undercut += 1; }
 
-    if (rostro === 'ovalado') puntos.basico += 1;
-    if (rostro === 'redondo') puntos.premium += 1;
-    if (rostro === 'cuadrado'){ puntos.barba += 1; puntos.premium += 1; }
-    if (rostro === 'alargado'){ puntos.personalizado += 1; puntos.basico += 1; }
+    if (rostro === 'ovalado'){ puntos.fade += 1; puntos.mullet += 1; puntos.undercut += 1; }
+    if (rostro === 'redondo'){ puntos.undercut += 2; puntos.fade += 1; puntos.pompadour += 1; }
+    if (rostro === 'cuadrado'){ puntos.pompadour += 2; puntos.fade += 1; puntos.crewcut += 1; }
+    if (rostro === 'alargado'){ puntos.crewcut += 2; puntos.buzzcut += 1; puntos.slickback += 1; }
 
-    let ganador = 'basico';
+    let ganador = 'buzzcut';
     let maxPuntos = -1;
-    ['basico','barba','premium','personalizado'].forEach(key => {
+    Object.keys(puntos).forEach(key => {
       if (puntos[key] > maxPuntos){ maxPuntos = puntos[key]; ganador = key; }
     });
 
-    const resultado = serviciosData[ganador];
+    const resultado = cortesData[ganador];
     document.getElementById('quizResultName').textContent = resultado.nombre;
     document.getElementById('quizResultDesc').textContent = resultado.desc;
-    document.getElementById('quizResultPrice').textContent = resultado.precio;
+    document.getElementById('quizResultPrice').textContent = resultado.servicio;
 
     irAPasoQuiz('result');
   }
