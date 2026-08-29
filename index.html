@@ -212,14 +212,10 @@
   .quiz-step{display:none;}
   .quiz-step.active{display:block;}
   .quiz-step p{color:var(--gray);font-size:1rem;margin-bottom:2rem;}
-    .quiz-step[data-step="intro"] p{
+  .quiz-step[data-step="intro"] p{
     color:var(--orange);
     font-size:1.15rem;
     font-weight:500;
-  }
-    .section-head .eyebrow{
-    font-size:1rem;
-    letter-spacing:0.3em;
   }
   .quiz-progress{
     font-size:0.72rem;
@@ -254,18 +250,21 @@
     color:var(--yellow);
     margin:1.5rem 0 2rem;
   }
-    .quiz-result-text .eyebrow{
+  .quiz-result-text .eyebrow{
     font-size:1rem;
     letter-spacing:0.3em;
   }
-    .quiz-step-result{
+  .quiz-step-result{
+    display:none;
     text-align:left;
-    display:grid;
-    grid-template-columns:2.5fr 1fr;
+    grid-template-columns:1.3fr 1fr;
     gap:2rem;
     align-items:center;
   }
-    .quiz-result-img{
+  .quiz-step-result.active{
+    display:grid;
+  }
+  .quiz-result-img{
     aspect-ratio:1/1;
     overflow:hidden;
     background:var(--bg);
@@ -273,7 +272,7 @@
     max-width:280px;
     margin:0 auto;
   }
-    .quiz-result-img img{width:100%;height:100%;object-fit:contain;}
+  .quiz-result-img img{width:100%;height:100%;object-fit:contain;}
   @media (max-width:700px){
     .quiz-step-result{grid-template-columns:1fr;text-align:center;}
   }
@@ -865,7 +864,7 @@
     letter-spacing:0.05em;
   }
 
-    /* ===== RESPONSIVE ===== */
+  /* ===== RESPONSIVE ===== */
   @media (max-width:960px){
     .nav-links{
       position:fixed;
@@ -916,7 +915,6 @@
     .team-grid{grid-template-columns:1fr;}
     .hero-logo-sello{display:none;}
   }
-  
 </style>
 </head>
 <body>
@@ -1023,12 +1021,12 @@
   <div class="quiz-card" id="quizCard">
 
     <div class="quiz-step active" data-step="intro">
-      <p>RESPONDE 3 PREGUNTAS RAPIDAS Y TE DIREMOS QUE SERVICIO SE AJUSTA MEJOR A TI.</p>
+      <p>Responde 5 preguntas rápidas y te decimos qué corte se ajusta mejor a ti.</p>
       <button type="button" class="btn btn-primary" id="quizStartBtn">Comenzar test →</button>
     </div>
 
     <div class="quiz-step" data-step="1">
-      <div class="quiz-progress">Pregunta 1 de 3</div>
+      <div class="quiz-progress">Pregunta 1 de 5</div>
       <h3>¿Cómo es la forma de tu rostro?</h3>
       <div class="quiz-options">
         <button type="button" class="quiz-option" data-question="rostro" data-value="ovalado">Ovalado</button>
@@ -1039,7 +1037,7 @@
     </div>
 
     <div class="quiz-step" data-step="2">
-      <div class="quiz-progress">Pregunta 2 de 3</div>
+      <div class="quiz-progress">Pregunta 2 de 5</div>
       <h3>¿Cómo es tu tipo de cabello?</h3>
       <div class="quiz-options">
         <button type="button" class="quiz-option" data-question="cabello" data-value="liso">Liso</button>
@@ -1050,13 +1048,35 @@
     </div>
 
     <div class="quiz-step" data-step="3">
-      <div class="quiz-progress">Pregunta 3 de 3</div>
+      <div class="quiz-progress">Pregunta 3 de 5</div>
       <h3>¿Cuánto tiempo le dedicas a peinarte cada día?</h3>
       <div class="quiz-options">
         <button type="button" class="quiz-option" data-question="tiempo" data-value="nada">Nada, salgo así</button>
         <button type="button" class="quiz-option" data-question="tiempo" data-value="poco">Menos de 5 minutos</button>
         <button type="button" class="quiz-option" data-question="tiempo" data-value="medio">5 a 10 minutos</button>
         <button type="button" class="quiz-option" data-question="tiempo" data-value="mucho">Más de 10 min, me gusta lucir bien</button>
+      </div>
+    </div>
+
+    <div class="quiz-step" data-step="4">
+      <div class="quiz-progress">Pregunta 4 de 5</div>
+      <h3>¿En qué rango de edad estás?</h3>
+      <div class="quiz-options">
+        <button type="button" class="quiz-option" data-question="edad" data-value="joven">18 a 25 años</button>
+        <button type="button" class="quiz-option" data-question="edad" data-value="adulto-joven">26 a 35 años</button>
+        <button type="button" class="quiz-option" data-question="edad" data-value="adulto">36 a 45 años</button>
+        <button type="button" class="quiz-option" data-question="edad" data-value="maduro">Más de 45 años</button>
+      </div>
+    </div>
+
+    <div class="quiz-step" data-step="5">
+      <div class="quiz-progress">Pregunta 5 de 5</div>
+      <h3>¿Dónde más vas a lucir tu corte?</h3>
+      <div class="quiz-options">
+        <button type="button" class="quiz-option" data-question="estilo" data-value="formal">Oficina / ambiente formal</button>
+        <button type="button" class="quiz-option" data-question="estilo" data-value="casual">Casual, día a día</button>
+        <button type="button" class="quiz-option" data-question="estilo" data-value="social">Salidas y vida social</button>
+        <button type="button" class="quiz-option" data-question="estilo" data-value="deporte">Deporte / gimnasio</button>
       </div>
     </div>
 
@@ -1069,7 +1089,7 @@
         <button type="button" class="btn btn-ghost" id="quizRestartBtn">Volver a intentar ↺</button>
       </div>
       <div class="quiz-result-img">
-        <img id="quizResultImg" src="img/logo remove.png" alt="">
+        <img id="quizResultImg" src="" alt="">
       </div>
     </div>
 
@@ -1415,7 +1435,7 @@
   const quizStartBtn = document.getElementById('quizStartBtn');
   const quizRestartBtn = document.getElementById('quizRestartBtn');
 
-  const respuestasQuiz = { rostro: null, cabello: null, tiempo: null };
+  const respuestasQuiz = { rostro: null, cabello: null, tiempo: null, edad: null, estilo: null };
 
   function irAPasoQuiz(paso){
     quizCard.querySelectorAll('.quiz-step').forEach(s => s.classList.remove('active'));
@@ -1432,7 +1452,9 @@
 
       if (pregunta === 'rostro') irAPasoQuiz('2');
       else if (pregunta === 'cabello') irAPasoQuiz('3');
-      else if (pregunta === 'tiempo') mostrarResultadoQuiz();
+      else if (pregunta === 'tiempo') irAPasoQuiz('4');
+      else if (pregunta === 'edad') irAPasoQuiz('5');
+      else if (pregunta === 'estilo') mostrarResultadoQuiz();
     });
   });
 
@@ -1441,25 +1463,25 @@
       nombre: 'Buzz Cut',
       desc: 'Corte al ras con máquina, mínimo mantenimiento y máxima frescura. Ideal para quienes buscan practicidad total.',
       servicio: 'Corte Básico — $20.000 cop',
-      img: 'img/Buzz cut.png'
+      img: 'img/buzzcut.png'
     },
     crewcut: {
       nombre: 'Crew Cut',
       desc: 'Un clásico atemporal: corto en los lados, un poco más de largo arriba. Ordenado, versátil y fácil de mantener.',
       servicio: 'Corte Básico — $20.000 cop',
-      img: 'img/crew cut.png'
+      img: 'img/crewcut.png'
     },
     fade: {
-      nombre: 'Taper Fade',
+      nombre: 'Fade',
       desc: 'Degradado progresivo de los lados hacia arriba. Moderno, limpio, y se adapta a casi cualquier tipo de rostro.',
       servicio: 'Corte Premium — $60.000 cop',
-      img: 'img/taper_fade.png'
+      img: 'img/fade.png'
     },
     undercut: {
       nombre: 'Undercut',
       desc: 'Contraste marcado entre laterales muy cortos y la parte superior larga. Look audaz y con mucha personalidad.',
       servicio: 'Corte Premium — $60.000 cop',
-      img: 'img/under_cut.png'
+      img: 'img/undercut.png'
     },
     pompadour: {
       nombre: 'Pompadour',
@@ -1471,7 +1493,7 @@
       nombre: 'Slick Back',
       desc: 'Todo el cabello peinado hacia atrás con producto. Look pulido, sofisticado y de bajo mantenimiento diario.',
       servicio: 'Barba & Corte — $40.000 cop',
-      img: 'img/slick_back.png'
+      img: 'img/slickback.png'
     },
     mullet: {
       nombre: 'Mullet',
@@ -1479,37 +1501,65 @@
       servicio: 'Personalizado con Asesoría',
       img: 'img/mullet.png'
     },
-    texturedcrop: {
-      nombre: 'Textured Crop',
-      desc: 'Textura natural con flequillo corto y desconectado. Perfecto para cabello rizado u ondulado, look desenfadado.',
+    sidepart: {
+      nombre: 'Side Part',
+      desc: 'Raya marcada a un lado con acabado pulido. Elegante, ordenado, y perfecto para un look formal o clásico con actitud.',
+      servicio: 'Barba & Corte — $40.000 cop',
+      img: 'img/sidepart.png'
+    },
+    frenchcrop: {
+      nombre: 'French Crop',
+      desc: 'Flequillo corto y texturizado con los laterales degradados. Uno de los cortes más pedidos del momento, moderno y versátil.',
       servicio: 'Corte Premium — $60.000 cop',
-      img: 'img/texture crop.png'
+      img: 'img/frenchcrop.png'
+    },
+    curlyshag: {
+      nombre: 'Curly Shag',
+      desc: 'Capas desordenadas que resaltan el rizo natural. Look actual, desenfadado, y con mucha personalidad para cabello rizado.',
+      servicio: 'Personalizado con Asesoría',
+      img: 'img/curlyshag.png'
     }
   };
 
   function mostrarResultadoQuiz(){
-    const { rostro, cabello, tiempo } = respuestasQuiz;
+    const { rostro, cabello, tiempo, edad, estilo } = respuestasQuiz;
     const puntos = {
       buzzcut: 0, crewcut: 0, fade: 0, undercut: 0,
-      pompadour: 0, slickback: 0, mullet: 0, texturedcrop: 0
+      pompadour: 0, slickback: 0, mullet: 0, sidepart: 0,
+      frenchcrop: 0, curlyshag: 0
     };
 
-    if (tiempo === 'nada'){ puntos.buzzcut += 3; puntos.crewcut += 2; }
-    if (tiempo === 'poco'){ puntos.fade += 2; puntos.crewcut += 1; puntos.undercut += 1; }
-    if (tiempo === 'medio'){ puntos.pompadour += 2; puntos.slickback += 2; puntos.undercut += 1; }
-    if (tiempo === 'mucho'){ puntos.mullet += 3; puntos.pompadour += 1; puntos.texturedcrop += 1; }
+    // Pregunta 1: forma del rostro
+    if (rostro === 'ovalado'){ puntos.fade += 1; puntos.frenchcrop += 1; puntos.undercut += 1; }
+    if (rostro === 'redondo'){ puntos.undercut += 1; puntos.pompadour += 1; puntos.frenchcrop += 1; }
+    if (rostro === 'cuadrado'){ puntos.pompadour += 1; puntos.crewcut += 1; puntos.fade += 1; }
+    if (rostro === 'alargado'){ puntos.crewcut += 1; puntos.buzzcut += 1; puntos.slickback += 1; }
 
-    if (cabello === 'liso'){ puntos.crewcut += 1; puntos.slickback += 2; puntos.pompadour += 1; }
-    if (cabello === 'ondulado'){ puntos.fade += 1; puntos.undercut += 1; puntos.texturedcrop += 1; }
-    if (cabello === 'rizado'){ puntos.texturedcrop += 3; puntos.mullet += 1; }
-    if (cabello === 'grueso'){ puntos.mullet += 1; puntos.buzzcut += 1; puntos.undercut += 1; }
+    // Pregunta 2: tipo de cabello
+    if (cabello === 'liso'){ puntos.crewcut += 1; puntos.slickback += 1; puntos.frenchcrop += 1; puntos.sidepart += 1; }
+    if (cabello === 'ondulado'){ puntos.fade += 1; puntos.undercut += 1; puntos.sidepart += 1; }
+    if (cabello === 'rizado'){ puntos.curlyshag += 2; puntos.mullet += 1; }
+    if (cabello === 'grueso'){ puntos.mullet += 1; puntos.undercut += 1; puntos.curlyshag += 1; }
 
-    if (rostro === 'ovalado'){ puntos.fade += 1; puntos.mullet += 1; puntos.undercut += 1; }
-    if (rostro === 'redondo'){ puntos.undercut += 2; puntos.fade += 1; puntos.pompadour += 1; }
-    if (rostro === 'cuadrado'){ puntos.pompadour += 2; puntos.fade += 1; puntos.crewcut += 1; }
-    if (rostro === 'alargado'){ puntos.crewcut += 2; puntos.buzzcut += 1; puntos.slickback += 1; }
+    // Pregunta 3: tiempo de arreglo
+    if (tiempo === 'nada'){ puntos.buzzcut += 1; puntos.crewcut += 1; }
+    if (tiempo === 'poco'){ puntos.fade += 1; puntos.frenchcrop += 1; }
+    if (tiempo === 'medio'){ puntos.pompadour += 1; puntos.slickback += 1; puntos.undercut += 1; }
+    if (tiempo === 'mucho'){ puntos.mullet += 1; puntos.pompadour += 1; puntos.curlyshag += 1; }
 
-    let ganador = 'buzzcut';
+    // Pregunta 4: edad
+    if (edad === 'joven'){ puntos.frenchcrop += 2; puntos.mullet += 1; puntos.curlyshag += 1; puntos.fade += 1; }
+    if (edad === 'adulto-joven'){ puntos.fade += 1; puntos.undercut += 1; puntos.frenchcrop += 1; }
+    if (edad === 'adulto'){ puntos.pompadour += 1; puntos.crewcut += 1; puntos.sidepart += 1; }
+    if (edad === 'maduro'){ puntos.crewcut += 2; puntos.slickback += 1; puntos.sidepart += 1; puntos.buzzcut += 1; }
+
+    // Pregunta 5: dónde se lo va a lucir
+    if (estilo === 'formal'){ puntos.slickback += 2; puntos.sidepart += 2; puntos.crewcut += 1; puntos.pompadour += 1; }
+    if (estilo === 'casual'){ puntos.fade += 1; puntos.frenchcrop += 1; puntos.sidepart += 1; }
+    if (estilo === 'social'){ puntos.undercut += 1; puntos.pompadour += 1; puntos.mullet += 1; }
+    if (estilo === 'deporte'){ puntos.buzzcut += 2; puntos.crewcut += 1; }
+
+    let ganador = 'fade';
     let maxPuntos = -1;
     Object.keys(puntos).forEach(key => {
       if (puntos[key] > maxPuntos){ maxPuntos = puntos[key]; ganador = key; }
@@ -1525,10 +1575,12 @@
     irAPasoQuiz('result');
   }
 
-    quizRestartBtn.addEventListener('click', () => {
+  quizRestartBtn.addEventListener('click', () => {
     respuestasQuiz.rostro = null;
     respuestasQuiz.cabello = null;
     respuestasQuiz.tiempo = null;
+    respuestasQuiz.edad = null;
+    respuestasQuiz.estilo = null;
 
     document.getElementById('quizResultName').textContent = '';
     document.getElementById('quizResultDesc').textContent = '';
