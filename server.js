@@ -5,6 +5,7 @@ require('dotenv').config();
 const reservasRoutes = require('./routes/reservas');
 const productosRoutes = require('./routes/productos');
 const pedidosRoutes = require('./routes/pedidos');
+const usuariosRoutes = require('./routes/usuarios');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());      // Permite leer JSON en el body de las peticiones
 app.use('/api/reservas', reservasRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api/pedidos', pedidosRoutes);
+app.use('/api/usuarios', usuariosRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
