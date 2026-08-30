@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   :root{
     --bg: #0c0a08;
@@ -632,6 +633,31 @@
   }
 
   /* ===== CART BUTTON (header) ===== */
+    .user-badge{
+    display:flex;
+    align-items:center;
+    gap:0.8rem;
+    margin-left:1rem;
+  }
+  .user-badge span{
+    font-size:0.82rem;
+    color:var(--white);
+    font-weight:500;
+  }
+  .logout-btn{
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--gray);
+    font-family:'Oswald',sans-serif;
+    font-size:0.72rem;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    padding:0.4rem 0.8rem;
+    cursor:pointer;
+    transition:border-color 0.2s ease, color 0.2s ease;
+  }
+  .logout-btn:hover{border-color:var(--orange);color:var(--orange);}
+  #googleSignInBtn{margin-left:1rem;}
   .cart-btn{
     position:relative;
     background:transparent;
@@ -929,6 +955,11 @@
     <a href="#productos">Productos</a>
     <a href="#contacto">Contacto</a>
     <a href="#contacto" class="btn btn-primary">Reservar</a>
+  </div>
+    <div id="googleSignInBtn"></div>
+  <div class="user-badge" id="userBadge" style="display:none;">
+    <span id="userName"></span>
+    <button type="button" id="logoutBtn" class="logout-btn">Salir</button>
   </div>
   <button class="cart-btn" id="cartBtn" aria-label="Ver carrito">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1430,6 +1461,85 @@
   burger.addEventListener('click', () => navLinks.classList.toggle('open'));
   navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
 
+
+  /* ===== LOGIN CON GOOGLE ===== */
+  const CLIENT_ID = '421419806587-cc09ptft0i6hg5duk182mq13hlb4ujf3.apps.googleusercontent.com';
+
+  const userBadge = document.getElementById('userBadge');
+  const userName = document.getElementById('userName');
+  const logoutBtn = document.getElementById('logoutBtn');
+  const googleSignInBtn = document.getElementById('googleSignInBtn');
+
+  function decodificarJWT(token){
+    const base64 = token.split('.')[1];
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+      '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+    ).join(''));
+    return JSON.parse(jsonPayload);
+  }
+
+  async function manejarLoginGoogle(response){
+    const datos = decodificarJWT(response.credential);
+
+    const usuario = {
+      google_id: datos.sub,
+      nombre: datos.name,
+      email: datos.email
+    };
+
+    localStorage.setItem('usuarioAgenteBarber', JSON.stringify(usuario));
+    mostrarUsuarioLogueado(usuario);
+
+    try {
+      await fetch('https://agente-barber.onrender.com/api/usuarios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(usuario)
+      });
+    } catch (err) {
+      console.error('Error al guardar usuario:', err);
+    }
+  }
+
+  function mostrarUsuarioLogueado(usuario){
+    googleSignInBtn.style.display = 'none';
+    userBadge.style.display = 'flex';
+    userName.textContent = usuario.nombre;
+
+    const nombreInput = document.getElementById('nombre');
+    const cartNombreInput = document.getElementById('cartNombre');
+    if (nombreInput) nombreInput.value = usuario.nombre;
+    if (cartNombreInput) cartNombreInput.value = usuario.nombre;
+  }
+
+  function cerrarSesionGoogle(){
+    localStorage.removeItem('usuarioAgenteBarber');
+    userBadge.style.display = 'none';
+    googleSignInBtn.style.display = 'block';
+    google.accounts.id.disableAutoSelect();
+  }
+
+  logoutBtn.addEventListener('click', cerrarSesionGoogle);
+
+  window.addEventListener('load', () => {
+    google.accounts.id.initialize({
+      client_id: CLIENT_ID,
+      callback: manejarLoginGoogle
+    });
+
+    const usuarioGuardado = localStorage.getItem('usuarioAgenteBarber');
+    if (usuarioGuardado) {
+      mostrarUsuarioLogueado(JSON.parse(usuarioGuardado));
+    } else {
+      google.accounts.id.renderButton(googleSignInBtn, {
+        theme: 'filled_black',
+        size: 'medium',
+        text: 'signin',
+        shape: 'pill'
+      });
+    }
+  });
+  
   /* ===== TEST DE ESTILO / VISAGISMO ===== */
   const quizCard = document.getElementById('quizCard');
   const quizStartBtn = document.getElementById('quizStartBtn');
