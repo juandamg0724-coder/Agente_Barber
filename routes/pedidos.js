@@ -42,7 +42,14 @@ router.post('/', async (req, res) => {
   }
 });
 
+// GET /api/pedidos → listar todos los pedidos con sus productos (solo para el administrador)
 router.get('/', async (req, res) => {
+  const googleId = req.headers['x-admin-id'];
+
+  if (googleId !== process.env.ADMIN_GOOGLE_ID) {
+    return res.status(403).json({ error: 'No autorizado.' });
+  }
+
   try {
     const [pedidos] = await pool.query('SELECT * FROM pedidos ORDER BY creado_en DESC');
 
