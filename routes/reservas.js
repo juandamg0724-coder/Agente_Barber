@@ -40,4 +40,30 @@ router.get('/', async (req, res) => {
   }
 });
 
+// DELETE /api/reservas → eliminar una o varias reservas (solo para el administrador)
+router.delete('/', async (req, res) => {
+  const googleId = req.headers['x-admin-id'];
+
+  if (googleId !== process.env.ADMIN_GOOGLE_ID) {
+    return res.status(403).json({ error: 'No autorizado.' });
+  }
+
+  const { ids } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ error: 'No se especificaron reservas para eliminar.' });
+  }
+
+  try {
+    const placeholders = ids.map(() => '?').join(',');
+    await pool.query(`DELETE FROM reservas WHERE id IN (${placeholders})`, ids);
+    res.json({ message: 'Reservas eliminadas correctamente.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al eliminar las reservas.' });
+  }
+});
+
+module.exports = router;
+
 module.exports = router;
