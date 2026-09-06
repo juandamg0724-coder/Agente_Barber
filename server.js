@@ -6,6 +6,7 @@ const reservasRoutes = require('./routes/reservas');
 const productosRoutes = require('./routes/productos');
 const pedidosRoutes = require('./routes/pedidos');
 const usuariosRoutes = require('./routes/usuarios');
+const resenasRoutes = require('./routes/resenas');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use('/api/reservas', reservasRoutes);
 app.use('/api/productos', productosRoutes);
 app.use('/api/pedidos', pedidosRoutes);
 app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/resenas', resenasRoutes);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
