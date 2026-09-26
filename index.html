@@ -861,18 +861,51 @@
     width:36px;
     white-space:nowrap;
   }
-  .admin-add-form{
+    .admin-add-form{
     margin-bottom:2rem;
     padding-bottom:1.6rem;
     border-bottom:1px solid var(--line);
   }
-  .admin-add-row{
+  .admin-add-layout{
     display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:0.8rem;
+    grid-template-columns:140px 1fr;
+    gap:1.2rem;
     margin-bottom:0.8rem;
   }
-  .admin-add-row input{
+  .admin-image-upload{
+    position:relative;
+    width:140px;
+    height:140px;
+    background:#0c0a08;
+    border:1px dashed var(--line);
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    transition:border-color 0.2s ease;
+  }
+  .admin-image-upload:hover{border-color:var(--yellow);}
+  .admin-image-upload img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+  }
+  #imageUploadText{
+    color:var(--gray);
+    font-family:'Oswald',sans-serif;
+    font-size:0.78rem;
+    text-align:center;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    line-height:1.5;
+  }
+  .admin-add-fields{
+    display:flex;
+    flex-direction:column;
+    gap:0.7rem;
+  }
+  .admin-add-fields input{
     width:100%;
     background:var(--bg);
     border:1px solid var(--line);
@@ -883,15 +916,16 @@
     font-weight:300;
     transition:border-color 0.2s ease;
   }
-  .admin-add-row input::placeholder{color:#5f584f;}
-  .admin-add-row input:focus{outline:none;border-color:var(--yellow);}
+  .admin-add-fields input::placeholder{color:#5f584f;}
+  .admin-add-fields input:focus{outline:none;border-color:var(--yellow);}
   .admin-add-btn{
     padding:0.75rem 1.4rem;
     font-size:0.72rem;
   }
 
   @media (max-width:600px){
-    .admin-add-row{grid-template-columns:1fr;}
+    .admin-add-layout{grid-template-columns:1fr;}
+    .admin-image-upload{width:100%;height:160px;}
   }
   @media (max-width:700px){
     .admin-modal{padding:1.5rem;}
@@ -1543,13 +1577,17 @@
     </div>
     <div class="admin-tab-content" data-tab-content="productos">
       <form id="addProductForm" class="admin-add-form">
-        <div class="admin-add-row">
-          <input type="text" id="newProductNombre" placeholder="Nombre del producto" required>
-          <input type="number" id="newProductPrecio" placeholder="Precio (ej: 25000)" required min="0">
-        </div>
-        <div class="admin-add-row">
-          <input type="text" id="newProductDescripcion" placeholder="Descripción corta">
-          <input type="text" id="newProductImagen" placeholder="Ruta de imagen (ej: img/nuevo.png)">
+        <div class="admin-add-layout">
+          <div class="admin-image-upload" id="imageUploadBox">
+            <img id="imagePreview" style="display:none;">
+            <span id="imageUploadText">+ Insertar<br>imagen</span>
+            <input type="file" id="newProductImagenFile" accept="image/*" hidden>
+          </div>
+          <div class="admin-add-fields">
+            <input type="text" id="newProductNombre" placeholder="Nombre del producto" required>
+            <input type="number" id="newProductPrecio" placeholder="Precio (ej: 25000)" required min="0">
+            <input type="text" id="newProductDescripcion" placeholder="Descripción corta">
+          </div>
         </div>
         <button type="submit" class="btn btn-primary admin-add-btn">Agregar producto</button>
       </form>
@@ -2210,25 +2248,59 @@
     }
   });
 
+  /* ===== CARGA DE IMAGEN (recuadro de subir foto) ===== */
+  const imageUploadBox = document.getElementById('imageUploadBox');
+  const imagePreview = document.getElementById('imagePreview');
+  const imageUploadText = document.getElementById('imageUploadText');
+  const newProductImagenFile = document.getElementById('newProductImagenFile');
+
+  let imagenBase64 = '';
+
+  imageUploadBox.addEventListener('click', () => {
+    newProductImagenFile.click();
+  });
+
+  newProductImagenFile.addEventListener('change', () => {
+    const file = newProductImagenFile.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e){
+      imagenBase64 = e.target.result;
+      imagePreview.src = imagenBase64;
+      imagePreview.style.display = 'block';
+      imageUploadText.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  });
+
   document.getElementById('addProductForm').addEventListener('submit', async function(e){
     e.preventDefault();
 
     const nombre = document.getElementById('newProductNombre').value;
     const precio = document.getElementById('newProductPrecio').value;
     const descripcion = document.getElementById('newProductDescripcion').value;
-    const imagen_url = document.getElementById('newProductImagen').value;
+
+    if (!imagenBase64){
+      alert('Por favor selecciona una imagen para el producto.');
+      return;
+    }
 
     try {
       const response = await fetch('https://agente-barber.onrender.com/api/productos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-admin-id': ADMIN_GOOGLE_ID },
-        body: JSON.stringify({ nombre, precio, descripcion, imagen_url })
+        body: JSON.stringify({ nombre, precio, descripcion, imagen_url: imagenBase64 })
       });
 
       if (!response.ok) throw new Error('Error al crear el producto');
 
       alert('¡Producto agregado con éxito!');
       this.reset();
+      imagenBase64 = '';
+      imagePreview.style.display = 'none';
+      imagePreview.src = '';
+      imageUploadText.style.display = 'block';
       cargarProductosAdmin();
       if (typeof cargarProductosPublico === 'function') cargarProductosPublico();
     } catch (err) {
