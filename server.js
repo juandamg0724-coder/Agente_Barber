@@ -11,7 +11,7 @@ const resenasRoutes = require('./routes/resenas');
 const app = express();
 
 app.use(cors());              // Permite que tu index.html (front-end) le hable a este servidor
-app.use(express.json());      // Permite leer JSON en el body de las peticiones
+app.use(express.json({ limit: '10mb' }));      // Permite leer JSON en el body de las peticiones (hasta 10mb, para imágenes)
 
 // Rutas de la API
 app.use('/api/reservas', reservasRoutes);
