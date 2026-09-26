@@ -21,7 +21,7 @@ router.post('/', async (req, res) => {
     return res.status(403).json({ error: 'No autorizado.' });
   }
 
-  const { nombre, descripcion, precio, imagen_url } = req.body;
+  const { nombre, descripcion, precio, imagen_url, imagen_url2 } = req.body;
 
   if (!nombre || !precio) {
     return res.status(400).json({ error: 'El nombre y el precio son obligatorios.' });
@@ -29,8 +29,8 @@ router.post('/', async (req, res) => {
 
   try {
     const [result] = await pool.query(
-      'INSERT INTO productos (nombre, descripcion, precio, imagen_url) VALUES (?, ?, ?, ?)',
-      [nombre, descripcion || '', precio, imagen_url || '']
+      'INSERT INTO productos (nombre, descripcion, precio, imagen_url, imagen_url2) VALUES (?, ?, ?, ?, ?)',
+      [nombre, descripcion || '', precio, imagen_url || '', imagen_url2 || null]
     );
     res.status(201).json({ message: 'Producto creado con éxito.', id: result.insertId });
   } catch (err) {

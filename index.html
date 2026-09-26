@@ -519,6 +519,7 @@
     margin-bottom:1.2rem;
     background:#1a1613;
   }
+    .product-img{position:relative;}
   .product-img img{
     width:100%;
     height:100%;
@@ -527,6 +528,44 @@
     transition:transform 0.5s ease;
   }
   .product-card:hover .product-img img{transform:scale(1.06);}
+  .product-img-nav{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    background:rgba(12,10,8,0.7);
+    border:none;
+    color:var(--white);
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1rem;
+    z-index:2;
+    transition:background 0.2s ease;
+  }
+  .product-img-nav:hover{background:var(--yellow);color:#141110;}
+  .product-img-prev{left:8px;}
+  .product-img-next{right:8px;}
+  .product-img-dots{
+    position:absolute;
+    bottom:8px;
+    left:0;
+    right:0;
+    display:flex;
+    justify-content:center;
+    gap:6px;
+    z-index:2;
+  }
+  .product-img-dot{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.4);
+  }
+  .product-img-dot.active{background:var(--yellow);}
   .product-card h3{
     font-size:1.15rem;
     margin-bottom:0.5rem;
@@ -866,11 +905,16 @@
     padding-bottom:1.6rem;
     border-bottom:1px solid var(--line);
   }
-  .admin-add-layout{
+    .admin-add-layout{
     display:grid;
     grid-template-columns:140px 1fr;
     gap:1.2rem;
     margin-bottom:0.8rem;
+  }
+  .admin-image-upload-group{
+    display:flex;
+    flex-direction:column;
+    gap:0.6rem;
   }
   .admin-image-upload{
     position:relative;
@@ -885,6 +929,11 @@
     overflow:hidden;
     transition:border-color 0.2s ease;
   }
+  .admin-image-upload-small{
+    width:140px;
+    height:80px;
+  }
+  .admin-image-upload-small span{font-size:0.65rem;}
   .admin-image-upload:hover{border-color:var(--yellow);}
   .admin-image-upload img{
     width:100%;
@@ -1576,12 +1625,19 @@
       </div>
     </div>
     <div class="admin-tab-content" data-tab-content="productos">
-      <form id="addProductForm" class="admin-add-form">
+            <form id="addProductForm" class="admin-add-form">
         <div class="admin-add-layout">
-          <div class="admin-image-upload" id="imageUploadBox">
-            <img id="imagePreview" style="display:none;">
-            <span id="imageUploadText">+ Insertar<br>imagen</span>
-            <input type="file" id="newProductImagenFile" accept="image/*" hidden>
+          <div class="admin-image-upload-group">
+            <div class="admin-image-upload" id="imageUploadBox">
+              <img id="imagePreview" style="display:none;">
+              <span id="imageUploadText">+ Insertar<br>imagen</span>
+              <input type="file" id="newProductImagenFile" accept="image/*" hidden>
+            </div>
+            <div class="admin-image-upload admin-image-upload-small" id="imageUploadBox2">
+              <img id="imagePreview2" style="display:none;">
+              <span id="imageUploadText2">+ Imagen 2<br>(opcional)</span>
+              <input type="file" id="newProductImagenFile2" accept="image/*" hidden>
+            </div>
           </div>
           <div class="admin-add-fields">
             <input type="text" id="newProductNombre" placeholder="Nombre del producto" required>
@@ -2248,28 +2304,45 @@
     }
   });
 
-  /* ===== CARGA DE IMAGEN (recuadro de subir foto) ===== */
+  /* ===== CARGA DE IMAGENES (recuadros de subir foto) ===== */
   const imageUploadBox = document.getElementById('imageUploadBox');
   const imagePreview = document.getElementById('imagePreview');
   const imageUploadText = document.getElementById('imageUploadText');
   const newProductImagenFile = document.getElementById('newProductImagenFile');
 
-  let imagenBase64 = '';
+  const imageUploadBox2 = document.getElementById('imageUploadBox2');
+  const imagePreview2 = document.getElementById('imagePreview2');
+  const imageUploadText2 = document.getElementById('imageUploadText2');
+  const newProductImagenFile2 = document.getElementById('newProductImagenFile2');
 
-  imageUploadBox.addEventListener('click', () => {
-    newProductImagenFile.click();
-  });
+  let imagenBase64 = '';
+  let imagenBase64_2 = '';
+
+  imageUploadBox.addEventListener('click', () => newProductImagenFile.click());
+  imageUploadBox2.addEventListener('click', () => newProductImagenFile2.click());
 
   newProductImagenFile.addEventListener('change', () => {
     const file = newProductImagenFile.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = function(e){
       imagenBase64 = e.target.result;
       imagePreview.src = imagenBase64;
       imagePreview.style.display = 'block';
       imageUploadText.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  newProductImagenFile2.addEventListener('change', () => {
+    const file = newProductImagenFile2.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e){
+      imagenBase64_2 = e.target.result;
+      imagePreview2.src = imagenBase64_2;
+      imagePreview2.style.display = 'block';
+      imageUploadText2.style.display = 'none';
     };
     reader.readAsDataURL(file);
   });
@@ -2286,11 +2359,11 @@
       return;
     }
 
-    try {
+      try {
       const response = await fetch('https://agente-barber.onrender.com/api/productos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-admin-id': ADMIN_GOOGLE_ID },
-        body: JSON.stringify({ nombre, precio, descripcion, imagen_url: imagenBase64 })
+        body: JSON.stringify({ nombre, precio, descripcion, imagen_url: imagenBase64, imagen_url2: imagenBase64_2 })
       });
 
       if (!response.ok) throw new Error('Error al crear el producto');
@@ -2298,9 +2371,13 @@
       alert('¡Producto agregado con éxito!');
       this.reset();
       imagenBase64 = '';
+      imagenBase64_2 = '';
       imagePreview.style.display = 'none';
       imagePreview.src = '';
       imageUploadText.style.display = 'block';
+      imagePreview2.style.display = 'none';
+      imagePreview2.src = '';
+      imageUploadText2.style.display = 'block';
       cargarProductosAdmin();
       if (typeof cargarProductosPublico === 'function') cargarProductosPublico();
     } catch (err) {
@@ -2675,7 +2752,35 @@
     });
   }
 
+
   async function cargarProductosPublico(){
+  function attachImageNavEvents(card){
+    const images = JSON.parse(card.dataset.images);
+    if (images.length <= 1) return;
+
+    const imgEl = card.querySelector('.product-img img');
+    const prevBtn = card.querySelector('.product-img-prev');
+    const nextBtn = card.querySelector('.product-img-next');
+    const dots = card.querySelectorAll('.product-img-dot');
+
+    function mostrarImagen(index){
+      imgEl.src = images[index];
+      dots.forEach((d, i) => d.classList.toggle('active', i === index));
+      card.dataset.imgIndex = index;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      let index = parseInt(card.dataset.imgIndex);
+      index = (index - 1 + images.length) % images.length;
+      mostrarImagen(index);
+    });
+
+    nextBtn.addEventListener('click', () => {
+      let index = parseInt(card.dataset.imgIndex);
+      index = (index + 1) % images.length;
+      mostrarImagen(index);
+    });
+  }
     const grid = document.getElementById('productosGrid');
     try {
       const response = await fetch('https://agente-barber.onrender.com/api/productos');
@@ -2686,10 +2791,23 @@
         return;
       }
 
-      grid.innerHTML = productos.map(p => `
-        <div class="product-card" data-name="${p.nombre}" data-price="${p.precio}">
+          grid.innerHTML = productos.map(p => {
+        const imagenes = [p.imagen_url || 'img/logo remove.png'];
+        if (p.imagen_url2) imagenes.push(p.imagen_url2);
+
+        const navHtml = imagenes.length > 1 ? `
+          <button type="button" class="product-img-nav product-img-prev">‹</button>
+          <button type="button" class="product-img-nav product-img-next">›</button>
+          <div class="product-img-dots">
+            ${imagenes.map((_, i) => `<span class="product-img-dot ${i === 0 ? 'active' : ''}"></span>`).join('')}
+          </div>
+        ` : '';
+
+        return `
+        <div class="product-card" data-name="${p.nombre}" data-price="${p.precio}" data-images='${JSON.stringify(imagenes)}' data-img-index="0">
           <div class="product-img">
-            <img src="${p.imagen_url || 'img/logo remove.png'}" alt="${p.nombre}">
+            <img src="${imagenes[0]}" alt="${p.nombre}">
+            ${navHtml}
           </div>
           <h3>${p.nombre}</h3>
           <p>${p.descripcion || ''}</p>
@@ -2701,9 +2819,13 @@
           </div>
           <button type="button" class="btn btn-primary add-to-cart-btn">Agregar al carrito</button>
         </div>
-      `).join('');
+      `;
+      }).join('');
 
-      grid.querySelectorAll('.product-card').forEach(attachProductCardEvents);
+      grid.querySelectorAll('.product-card').forEach(card => {
+        attachProductCardEvents(card);
+        attachImageNavEvents(card);
+      });
     } catch (err) {
       console.error(err);
       grid.innerHTML = '<p class="admin-loading" style="grid-column:1/-1;">Error al cargar los productos.</p>';
